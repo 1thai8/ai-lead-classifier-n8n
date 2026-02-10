@@ -1,0 +1,430 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contact us",
+        "formDescription": "Send your quest for our company",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name"
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Phone Number"
+            },
+            {
+              "fieldLabel": "Let us a messege"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -336,
+        -176
+      ],
+      "id": "88a45ad8-4368-4859-baa8-567bed6bf5b0",
+      "name": "New Lead",
+      "webhookId": "ae19f74d-bad9-4ce8-bc44-f53b49b3700f"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=We've received your message, {{ $json.Name }}!",
+        "message": "=Hi,  {{ $json.Name }}.  Thank you for reaching out to us!  This is a quick note to let you know that we have successfully received your inquiry regarding:{{ $json['Let us a messege'] }}  Our team has been notified, and someone will get back to you shortly. In the meantime, feel free to check our website for more information.  Best regards, Customer Success Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        -176
+      ],
+      "id": "d1bbf7fe-9e42-4849-be1e-912f4a67cf32",
+      "name": "Auto-Response",
+      "webhookId": "c8e2e168-48f7-4399-b938-3ae614830031",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "l4OXjT52mh5U2fOo",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "listId": "6980f0636d3b27ce866b4816",
+        "name": "= {{ $node[\"New Lead\"].json[\"Name\"] }}",
+        "description": "=Lead data:\n📧 Email: {{ $node[\"New Lead\"].json[\"Email\"] }}\n📞 Phone: {{ $node[\"New Lead\"].json[\"Phone Number\"] }}\n💬 Messeger: {{ $node[\"New Lead\"].json[\"Let us a messege\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -176
+      ],
+      "id": "dca4a36a-c967-49b8-8bc2-cecb0e5cb4a9",
+      "name": "Central Inbox",
+      "credentials": {
+        "trelloApi": {
+          "id": "cgnHB9gEqICfoBPM",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('New Lead').item.json['Let us a messege'] }}",
+        "options": {
+          "systemMessage": "Role: You are a Senior Automation Consultant for Marketing Agencies. Your goal is to analyze leads from agency owners looking to automate their workflows.\n\nTask: Identify the agency's operational bottlenecks and qualify the lead intent.\n\nClassification Rules:\n\nPRIORITY: Leads mentioning high lead volume, manual reporting issues, client onboarding friction, or urgent scaling needs.\n\nNORMAL: General questions about tools, curiosity-based inquiries, or very small-scale operations.\n\n CRITICAL: If the message mentions 'urgently', 'immediately', 'drowning', 'losing money', or more than 5 clients, you MUST classify it as PRIORITY\n\nExtraction Requirements:\n\nAgency Bottleneck: What manual process is slowing them down? (e.g., reporting, CRM sync, onboarding).\n\nDesired Automation: Which specific tool or workflow do they want to automate?\n\nConsultant Action: Suggest a high-value automation \"quick win\" for the discovery call.\n\nConstraint: Respond strictly in this format:\n[STATUS] | Bottleneck: [description] | Automation: [tool/process] | Action: [quick win]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        144,
+        -176
+      ],
+      "id": "4403ea19-669d-4e48-ad58-769a5968f973",
+      "name": "Lead Classifier"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9196c18b-56c9-46ab-bf1e-b360c7169e10",
+              "leftValue": "={{ $('Lead Classifier').item.json.output }}",
+              "rightValue": "PRIORITY",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        -80
+      ],
+      "id": "02294360-ad1e-424b-a6bd-d85bd0a17877",
+      "name": "Check Priority"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -32
+      ],
+      "id": "8009acfb-9051-44f3-b208-d3731e94151b",
+      "name": "LLM Engine",
+      "credentials": {
+        "groqApi": {
+          "id": "KaKZbMdW6qlowpTX",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1T-KflIK-0B0VcOJn4H-WkovmU3UUJXEjOOlqN-xx20Q",
+          "mode": "list",
+          "cachedResultName": "CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T-KflIK-0B0VcOJn4H-WkovmU3UUJXEjOOlqN-xx20Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T-KflIK-0B0VcOJn4H-WkovmU3UUJXEjOOlqN-xx20Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            " Date": "={{ $now }}",
+            "Nome": "={{ $('New Lead').item.json.Name }}",
+            "Email": "={{ $('New Lead').item.json.Email }}",
+            "Messeger": "={{ $('New Lead').item.json['Let us a messege'] }}",
+            "Status": "={{ $('Lead Classifier').item.json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": " Date",
+              "displayName": " Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Messeger",
+              "displayName": "Messeger",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        -272
+      ],
+      "id": "2385a9af-79f3-4414-b035-bb2c0c53ba12",
+      "name": "Log Leads",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7axfvU5ZceDfnaTu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "listId": "6980f078752a3fddceebd566",
+        "name": "=[{{ $node[\"Lead Classifier\"].json[\"output\"] }}] - {{ $node[\"New Lead\"].json[\"Name\"] }}",
+        "description": "=Lead data:\n📧 Email: {{ $node[\"New Lead\"].json[\"Email\"] }}\n📞 Phone: {{ $node[\"New Lead\"].json[\"Phone Number\"] }}\n💬 Messeger: {{ $node[\"New Lead\"].json[\"Let us a messege\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -208
+      ],
+      "id": "46be732a-f2a1-4bc7-a01c-6cf0d5bdf997",
+      "name": "Priority Board",
+      "credentials": {
+        "trelloApi": {
+          "id": "cgnHB9gEqICfoBPM",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "listId": "6980f091d893f21936910e27",
+        "name": "=[{{ $node[\"Lead Classifier\"].json[\"output\"] }}] - {{ $node[\"New Lead\"].json[\"Name\"] }}",
+        "description": "=Lead data:\n📧 Email: {{ $node[\"New Lead\"].json[\"Email\"] }}\n📞 Phone: {{ $node[\"New Lead\"].json[\"Phone Number\"] }}\n💬 Messeger: {{ $node[\"New Lead\"].json[\"Let us a messege\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -16
+      ],
+      "id": "70f403d4-f1d2-4593-9fc9-219ceb1f0025",
+      "name": "General Board",
+      "credentials": {
+        "trelloApi": {
+          "id": "cgnHB9gEqICfoBPM",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7711544608",
+        "text": "=New lead recieved!\nName: {{ $('New Lead').item.json.Name }}\nEmail: {{ $('New Lead').item.json.Email }}\nPhone number:{{ $('New Lead').item.json['Phone Number'] }}\nStatus IA: {{ $node[\"Lead Classifier\"].json[\"output\"] }}\nMensagem: {{ $('New Lead').item.json['Let us a messege'] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        -96
+      ],
+      "id": "e2c5459f-f9a8-4d2e-8b52-b1da45e34406",
+      "name": "Alert Team",
+      "webhookId": "9429acd6-3fb8-41cc-9802-74de7508bb02",
+      "credentials": {
+        "telegramApi": {
+          "id": "abr1BIh3WRPhmnSi",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "New Lead": {
+      "main": [
+        [
+          {
+            "node": "Auto-Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-Response": {
+      "main": [
+        [
+          {
+            "node": "Central Inbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Central Inbox": {
+      "main": [
+        [
+          {
+            "node": "Lead Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Classifier": {
+      "main": [
+        [
+          {
+            "node": "Log Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Priority": {
+      "main": [
+        [
+          {
+            "node": "Priority Board",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Board",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Engine": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Leads": {
+      "main": [
+        [
+          {
+            "node": "Check Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Priority Board": {
+      "main": [
+        [
+          {
+            "node": "Alert Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General Board": {
+      "main": [
+        [
+          {
+            "node": "Alert Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Team": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6d56ff5b726775363f824f4eaa3f3a6b22317f56fdc466672a9e4ad627777b34"
+  }
+}
