@@ -8,7 +8,15 @@
 
 ## 📹 Demo
 
-https://github.com/1thai8/ai-lead-classifier-n8n/assets/CrmBin.mp4
+https://github.com/user-attachments/assets/e96f8185-4182-4d93-b62f-061308e8297f
+
+https://github.com/user-attachments/assets/eb78dadb-58e8-46c6-b363-7109b42a7f77
+
+---
+
+## 🏗️ Workflow
+
+<img width="878" alt="Workflow" src="https://github.com/user-attachments/assets/f705a0aa-e47d-4a0b-9cbe-c2c04c7e23cd" />
 
 ---
 
@@ -23,23 +31,6 @@ https://github.com/1thai8/ai-lead-classifier-n8n/assets/CrmBin.mp4
 
 ---
 
-## 🏗️ Architecture
-
-```
-New Lead (Webhook)
-       ↓
-AI Qualification (Groq/Llama3)
-       ↓
-  ┌────┴────┐
-Priority   General
-  ↓           ↓
-Gmail      Gmail
-Sheets     Sheets
-Telegram
-```
-
----
-
 ## 🛠️ Tech Stack
 
 | Layer | Tool |
@@ -49,12 +40,6 @@ Telegram
 | CRM | Google Sheets |
 | Email | Gmail API |
 | Alerts | Telegram Bot |
-
----
-
-## 🎯 Use Case
-
-Built for businesses that receive high lead volume and need to prioritize follow-up automatically — without manual qualification.
 
 ---
 
