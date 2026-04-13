@@ -1,23 +1,70 @@
-# 🤖 AI-Powered Lead Categorizer & CRM Automation
+# AI Lead Classifier & CRM Automation — n8n
 
-This project features a professional-grade automation workflow designed to eliminate manual lead qualification. Using **n8n**, **Groq (AI)**, and **Google Workspace**, it identifies high-value opportunities in real-time.
+> End-to-end lead management system powered by LLM + n8n. Captures leads, scores intent with AI, routes to priority pipelines, and triggers personalized outreach — fully automated.
 
-### 🚀 Key Features
-* **Instant Response**: Automatic personalized emails via Gmail.
-* **AI Qualification**: Leads are analyzed by an LLM to determine urgency and scale.
-* **Smart Routing**: High-intent leads are sent to a Priority Trello Board, while others go to General.
-* **Live CRM**: Every lead is logged in Google Sheets for historical tracking.
-* **Real-time Alerts**: Instant Telegram notifications for "Priority" status.
-  
+![n8n](https://img.shields.io/badge/n8n-workflow-orange) ![AI](https://img.shields.io/badge/LLM-Groq%2FLlama3-blue) ![CRM](https://img.shields.io/badge/CRM-Google%20Sheets-green)
 
+---
 
+## 📹 Demo
 
+https://github.com/1thai8/ai-lead-classifier-n8n/assets/CrmBin.mp4
 
+---
 
-https://github.com/user-attachments/assets/eb78dadb-58e8-46c6-b363-7109b42a7f77
+## 💡 What it does
 
+- Captures incoming leads from any source
+- AI scores each lead for urgency and intent using Llama 3 via Groq
+- Routes high-intent leads to a **Priority pipeline**, others to **General pipeline**
+- Logs every lead to Google Sheets (live CRM)
+- Sends personalized outreach email via Gmail automatically
+- Fires real-time Telegram alerts for Priority leads
 
+---
 
+## 🏗️ Architecture
 
-<img width="878" height="311" alt="Screenshot 2026-02-10 223936" src="https://github.com/user-attachments/assets/f705a0aa-e47d-4a0b-9cbe-c2c04c7e23cd" />
+```
+New Lead (Webhook)
+       ↓
+AI Qualification (Groq/Llama3)
+       ↓
+  ┌────┴────┐
+Priority   General
+  ↓           ↓
+Gmail      Gmail
+Sheets     Sheets
+Telegram
+```
 
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Tool |
+|---|---|
+| Automation | n8n |
+| AI / LLM | Llama 3 via Groq |
+| CRM | Google Sheets |
+| Email | Gmail API |
+| Alerts | Telegram Bot |
+
+---
+
+## 🎯 Use Case
+
+Built for businesses that receive high lead volume and need to prioritize follow-up automatically — without manual qualification.
+
+---
+
+## 📦 Related Projects
+
+| Project | Description |
+|---|---|
+| [bonnie-agent](https://github.com/1thai8/bonnie-agent) | AI receptionist for clinic booking via WhatsApp |
+| [ai-lead-capture-system](https://github.com/1thai8/ai-lead-capture-system) | Lead capture pipeline with AI outreach |
+
+---
+
+Built by [Thainá Souza](https://github.com/1thai8) · AutoScale AI
