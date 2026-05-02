@@ -55,4 +55,4 @@ https://github.com/user-attachments/assets/eb78dadb-58e8-46c6-b363-7109b42a7f77
 
 ---
 
-Built by [Thainá Souza](https://github.com/1thai8) · AutoScale AI
+Built by [Thainá Souza](https://github.com/1thai8) · Myelon AI
